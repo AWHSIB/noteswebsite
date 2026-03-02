@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bishwa Notes Hub — For Guna Raj Ghimire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f1222;
+      --card:#171a32;
+      --accent:#6cf2c2;
+      --text:#f4f6ff;
+      --muted:#b9c0ff;
+      --danger:#ff6b6b;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:'Poppins',system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell;
+      background:linear-gradient(135deg,#0f1222,#121642 60%,#0f1222);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+    }
+    .sidebar{
+      width:280px;
+      background:rgba(23,26,50,.9);
+      border-right:1px solid rgba(255,255,255,.08);
+      padding:20px 16px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      backdrop-filter: blur(8px);
+    }
+    .brand{
+      text-align:center;
+      padding:12px 10px 18px;
+      border-bottom:1px dashed rgba(255,255,255,.12);
+    }
+    .brand h1{margin:0;font-size:1.1rem;letter-spacing:.4px;}
+    .brand p{margin:6px 0 0;color:var(--muted);font-size:.8rem}
+
+    .search input{
+      width:100%;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.1);
+      background:#0f1222;
+      color:var(--text);
+      outline:none;
+    }
+    .note-list{
+      flex:1;
+      overflow:auto;
+      padding-right:4px;
+    }
+    .note-item{
+      background:#0f1222;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;
+      padding:10px 12px;
+      margin-bottom:10px;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+    .note-item:hover{border-color:var(--accent);}
+    .note-item.active{outline:2px solid var(--accent);}
+    .note-item h4{margin:0 0 4px;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .note-item span{font-size:.7rem;color:var(--muted)}
+
+    .add-btn{
+      padding:12px 14px;
+      border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),#7aa2ff);
+      color:#06141a;
+      font-weight:600;
+      border:none;
+      cursor:pointer;
+      box-shadow:0 6px 18px rgba(108,242,194,.25);
+    }
+
+    .main{
+      flex:1;
+      padding:26px 28px 22px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .topbar h2{margin:0;font-size:1.2rem}
+    .topbar small{color:var(--muted)}
+
+    .editor{
+      flex:1;
+      background:rgba(23,26,50,.9);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:18px;
+      padding:18px 18px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      backdrop-filter: blur(8px);
+    }
+    .editor input{
+      background:#0f1222;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:12px;
+      padding:12px 14px;
+      color:var(--text);
+      outline:none;
+      font-size:1rem;
+      font-weight:600;
+    }
+    .editor textarea{
+      flex:1;
+      background:#0f1222;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:14px;
+      padding:14px 16px;
+      color:var(--text);
+      outline:none;
+      resize:none;
+      line-height:1.6;
+      font-size:.95rem;
+    }
+    .actions{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .actions button{
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:#0f1222;
+      color:var(--text);
+      cursor:pointer;
+    }
+    .actions .save{background:linear-gradient(135deg,#6cf2c2,#7aa2ff);color:#06141a;font-weight:600}
+    .actions .delete{border-color:rgba(255,107,107,.4);color:var(--danger)}
+
+    .footer{
+      text-align:center;
+      font-size:.8rem;
+      color:var(--muted);
+    }
+
+    @media(max-width:900px){
+      .sidebar{width:220px}
+    }
+    @media(max-width:720px){
+      body{flex-direction:column}
+      .sidebar{width:100%;flex-direction:row;align-items:center;gap:10px}
+      .note-list{display:none}
+      .search{flex:1}
+      .add-btn{white-space:nowrap}
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>📒 Bishwa Notes Hub</h1>
+      <p>Specially designed by <strong>Bishwa Ghimire</strong><br>for <strong>Guna Raj Ghimire</strong></p>
+    </div>
+
+    <div class="search">
+      <input type="text" id="search" placeholder="Search notes..." />
+    </div>
+
+    <div class="note-list" id="noteList"></div>
+
+    <button class="add-btn" id="newNote">+ New Note</button>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h2 id="welcome">Welcome 👋</h2>
+        <small>Write, save, and organize your notes easily</small>
+      </div>
+      <small id="clock"></small>
+    </div>
+
+    <section class="editor">
+      <input type="text" id="title" placeholder="Note title..." />
+      <textarea id="content" placeholder="Start writing your notes here..."></textarea>
+
+      <div class="actions">
+        <button class="delete" id="delete">🗑 Delete</button>
+        <div style="display:flex;gap:8px">
+          <button id="clear">Clear</button>
+          <button class="save" id="save">💾 Save</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">© 2026 — Crafted with ❤️ by Bishwa Ghimire for Guna Raj Ghimire</div>
+  </main>
+
+<script>
+  const noteList = document.getElementById('noteList');
+  const titleInput = document.getElementById('title');
+  const contentInput = document.getElementById('content');
+  const saveBtn = document.getElementById('save');
+  const deleteBtn = document.getElementById('delete');
+  const clearBtn = document.getElementById('clear');
+  const newNoteBtn = document.getElementById('newNote');
+  const searchInput = document.getElementById('search');
+  const clock = document.getElementById('clock');
+
+  let notes = JSON.parse(localStorage.getItem('bishwa_notes') || '[]');
+  let activeId = null;
+
+  function updateClock(){
+    const d = new Date();
+    clock.textContent = d.toLocaleString();
+  }
+  setInterval(updateClock,1000); updateClock();
+
+  function saveNotes(){
+    localStorage.setItem('bishwa_notes', JSON.stringify(notes));
+    renderList();
+  }
+
+  function renderList(filter=''){
+    noteList.innerHTML='';
+    const list = notes.filter(n => n.title.toLowerCase().includes(filter) || n.content.toLowerCase().includes(filter));
+    if(!list.length){
+      noteList.innerHTML = '<p style="color:#b9c0ff;font-size:.85rem;text-align:center">No notes yet</p>';
+      return;
+    }
+    list.forEach(n =>{
+      const div = document.createElement('div');
+      div.className='note-item' + (n.id===activeId?' active':'');
+      div.innerHTML = `<h4>${n.title||'Untitled note'}</h4><span>${new Date(n.time).toLocaleString()}</span>`;
+      div.onclick=()=>openNote(n.id);
+      noteList.appendChild(div);
+    })
+  }
+
+  function openNote(id){
+    const n = notes.find(x=>x.id===id);
+    if(!n) return;
+    activeId=id;
+    titleInput.value=n.title;
+    contentInput.value=n.content;
+    renderList(searchInput.value.toLowerCase());
+  }
+
+  newNoteBtn.onclick=()=>{
+    activeId=null;
+    titleInput.value='';
+    contentInput.value='';
+    titleInput.focus();
+  }
+
+  saveBtn.onclick=()=>{
+    const t = titleInput.value.trim();
+    const c = contentInput.value.trim();
+    if(!t && !c) return alert('Write something first!');
+
+    if(activeId){
+      const n = notes.find(x=>x.id===activeId);
+      n.title=t; n.content=c; n.time=Date.now();
+    }else{
+      notes.unshift({id:Date.now(), title:t, content:c, time:Date.now()});
+      activeId = notes[0].id;
+    }
+    saveNotes();
+  }
+
+  deleteBtn.onclick=()=>{
+    if(!activeId) return alert('No note selected');
+    if(confirm('Delete this note?')){
+      notes = notes.filter(x=>x.id!==activeId);
+      activeId=null;
+      titleInput.value=''; contentInput.value='';
+      saveNotes();
+    }
+  }
+
+  clearBtn.onclick=()=>{
+    titleInput.value=''; contentInput.value='';
+  }
+
+  searchInput.oninput=(e)=>{
+    renderList(e.target.value.toLowerCase());
+  }
+
+  renderList();
+</script>
+</body>
+</html>
